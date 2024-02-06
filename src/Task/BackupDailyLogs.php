@@ -5,6 +5,10 @@ namespace PshBackup\Task;
 use Aws\S3\S3ClientInterface;
 use PshBackup\Util\S3Destination;
 
+/**
+ * Limitations:
+ *  - Only captures logs matching the date format, not command output from things like workers and cron jobs.
+ */
 final readonly class BackupDailyLogs implements TaskInterface {
 
     public function __construct(
