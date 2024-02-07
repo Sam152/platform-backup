@@ -28,6 +28,7 @@ $s3Client = new S3Client([
     ],
 ]);
 $localBackupDirectory = sprintf('%s/backups', $platformConfig->appDir);
+$safeBranchName = Inflector::safeS3Prefix($platformConfig->branch);
 
 $tasks = [
     new BackupDatabase(
@@ -35,7 +36,7 @@ $tasks = [
         localBackupDirectory: $localBackupDirectory,
         destination: new S3Destination(
             getenv('S3_BUCKET'),
-            sprintf('platform/%s/%s/database', $platformConfig->applicationName, Inflector::safeS3Prefix($platformConfig->branch))
+            sprintf('platform/%s/%s/database', $platformConfig->applicationName, $safeBranchName)
         ),
         database: $platformConfig->credentials('database'),
     ),
@@ -44,7 +45,7 @@ $tasks = [
         sourceDirectory: sprintf('%s/private', $platformConfig->appDir),
         destination: new S3Destination(
             getenv('S3_BUCKET'),
-            sprintf('platform/%s/%s/files-private', $platformConfig->applicationName, Inflector::safeS3Prefix($platformConfig->branch))
+            sprintf('platform/%s/%s/files-private', $platformConfig->applicationName, $safeBranchName)
         )
     ),
     new BackupFilesDirectory(
@@ -52,7 +53,7 @@ $tasks = [
         sourceDirectory: sprintf('%s/app/sites/default/files', $platformConfig->appDir),
         destination: new S3Destination(
             getenv('S3_BUCKET'),
-            sprintf('platform/%s/%s/files-public', $platformConfig->applicationName, Inflector::safeS3Prefix($platformConfig->branch))
+            sprintf('platform/%s/%s/files-public', $platformConfig->applicationName, $safeBranchName)
         )
     ),
     new BackupDailyLogs(
@@ -61,7 +62,7 @@ $tasks = [
         localBackupDirectory: $localBackupDirectory,
         destination: new S3Destination(
             getenv('S3_BUCKET'),
-            sprintf('platform/%s/%s/logs', $platformConfig->applicationName, Inflector::safeS3Prefix('main'))
+            sprintf('platform/%s/%s/logs', $platformConfig->applicationName, $safeBranchName)
         ),
         // If "yesterday" was 12 hours ago, this command must be run in the first 12 hours of the day (UTC).
         yesterday: (new DateTimeImmutable())->sub(new \DateInterval('PT12H')),
