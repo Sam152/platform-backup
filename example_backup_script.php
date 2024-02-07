@@ -7,6 +7,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Aws\S3\S3Client;
+use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Platformsh\ConfigReader\Config;
@@ -75,5 +76,8 @@ $tasks = [
 ];
 
 (new TaskRunner(
-    logger: (new Logger('backup_logger'))->pushHandler(new StreamHandler('php://stderr')),
+    logger: (new Logger('backup_logger'))
+        ->pushHandler(new StreamHandler('php://stderr'))
+        // Email someone when a critical error is logged, ie one of the tasks failed.
+        ->pushHandler(new NativeMailerHandler('devs@example.com', 'Critical error from backup system', 'devs@example.com'))
 ))->run($tasks);
