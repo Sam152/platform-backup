@@ -4,7 +4,7 @@
  * This is an example implementation. Copy it into your project and modify it for your needs.
  */
 
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use Aws\S3\S3Client;
 use Monolog\Handler\StreamHandler;
