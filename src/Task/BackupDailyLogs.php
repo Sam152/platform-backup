@@ -21,9 +21,6 @@ final readonly class BackupDailyLogs implements TaskInterface {
     ) {
     }
 
-    /**
-     * Adapted from: https://gitlab.com/contextualcode/platformsh-store-logs-at-s3
-     */
     public function execute(): void {
         $logFileName = basename($this->sourceLogFile);
         $localBackupFilePath = sprintf('%s/%s-%s', $this->localBackupDirectory, $logFileName, $this->yesterday->format('Y-m-d'));

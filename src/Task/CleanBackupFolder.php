@@ -2,9 +2,6 @@
 
 namespace PshBackup\Task;
 
-use Aws\S3\S3ClientInterface;
-use PshBackup\Util\S3Destination;
-
 final readonly class CleanBackupFolder implements TaskInterface {
 
     public function __construct(

@@ -1,12 +1,7 @@
 <?php
 
 /**
- * How to use this script:
- *   - Create a new folder in the root of your Platform.sh project called "jobs".
- *   - Run composer init && composer require sam152/platform-backup
- *   - Add AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and S3_BUCKET to your project variables.
- *   - Copy this file into jobs/run.php and customise to your needs
- *   - Add an entry into your crons that invokes your script as: `php ./jobs/run.php`
+ * This is an example implementation. Copy it into your project and modify it for your needs.
  */
 
 require 'vendor/autoload.php';
