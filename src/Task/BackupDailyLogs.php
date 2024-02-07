@@ -26,7 +26,7 @@ final readonly class BackupDailyLogs implements TaskInterface {
         $localBackupFilePath = sprintf('%s/%s-%s', $this->localBackupDirectory, $logFileName, $this->yesterday->format('Y-m-d'));
         $searchDatePattern = $this->yesterday->format($this->logDatePattern);
 
-        echo("cat $this->sourceLogFile | grep $searchDatePattern > $localBackupFilePath");
+        exec("cat $this->sourceLogFile | grep $searchDatePattern > $localBackupFilePath");
 
         if (!file_exists($localBackupFilePath)) {
             throw new \Exception('Log file was not created.');
