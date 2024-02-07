@@ -61,7 +61,7 @@ $tasks = [
         localBackupDirectory: $localBackupDirectory,
         destination: new S3Destination(
             getenv('S3_BUCKET'),
-            sprintf('platform/%s/%s/logs', 'api', Inflector::safeS3Prefix('main'))
+            sprintf('platform/%s/%s/logs', $platformConfig->applicationName, Inflector::safeS3Prefix('main'))
         ),
         // If "yesterday" was 12 hours ago, this command must be run in the first 12 hours of the day (UTC).
         yesterday: (new DateTimeImmutable())->sub(new \DateInterval('PT12H')),
