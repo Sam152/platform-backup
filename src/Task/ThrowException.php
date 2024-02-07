@@ -7,7 +7,7 @@ namespace PshBackup\Task;
  *   - Do other tasks continue when one fails?
  *   - Are the correct logger channels invoked? Ie, perhaps we have an email logger configured for critical errors.
  */
-final readonly class ThrowException implements TaskInterface {
+final class ThrowException implements TaskInterface {
 
     public function __construct() {
     }

@@ -9,15 +9,15 @@ use PshBackup\Util\S3Destination;
  * Limitations:
  *  - Only captures logs matching the date format, not command output from things like workers and cron jobs.
  */
-final readonly class BackupDailyLogs implements TaskInterface {
+final class BackupDailyLogs implements TaskInterface {
 
     public function __construct(
-        private S3ClientInterface $s3Client,
-        private string $sourceLogFile,
-        private string $localBackupDirectory,
-        private S3Destination $destination,
-        private \DateTimeInterface $yesterday,
-        private string $logDatePattern,
+        private readonly S3ClientInterface $s3Client,
+        private readonly string $sourceLogFile,
+        private readonly string $localBackupDirectory,
+        private readonly S3Destination $destination,
+        private readonly \DateTimeInterface $yesterday,
+        private readonly string $logDatePattern,
     ) {
     }
 

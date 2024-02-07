@@ -5,12 +5,12 @@ namespace PshBackup\Task;
 use Aws\S3\S3ClientInterface;
 use PshBackup\Util\S3Destination;
 
-final readonly class BackupFilesDirectory implements TaskInterface {
+final class BackupFilesDirectory implements TaskInterface {
 
     public function __construct(
-        private S3ClientInterface $s3Client,
-        private string $sourceDirectory,
-        private S3Destination $destination,
+        private readonly S3ClientInterface $s3Client,
+        private readonly string $sourceDirectory,
+        private readonly S3Destination $destination,
     ) {
     }
 

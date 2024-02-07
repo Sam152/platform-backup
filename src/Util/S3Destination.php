@@ -2,7 +2,7 @@
 
 namespace PshBackup\Util;
 
-readonly final class S3Destination {
+final class S3Destination {
     public function __construct(public string $bucketName, public string $key) {
     }
     public function uri(): string {

@@ -2,11 +2,11 @@
 
 namespace PshBackup\Task;
 
-final readonly class CleanBackupFolder implements TaskInterface {
+final class CleanBackupFolder implements TaskInterface {
 
     public function __construct(
-        private string $localBackupDirectory,
-        private int $localRetentionDays,
+        private readonly string $localBackupDirectory,
+        private readonly int $localRetentionDays,
     ) {
     }
 

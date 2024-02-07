@@ -4,7 +4,7 @@ namespace PshBackup;
 
 use Psr\Log\LoggerInterface;
 
-readonly final class TaskRunner {
+final class TaskRunner {
 
     public function __construct(private LoggerInterface $logger) {
     }
