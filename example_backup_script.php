@@ -15,8 +15,10 @@ use Aws\S3\S3Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Platformsh\ConfigReader\Config;
+use PshBackup\Task\BackupDailyLogs;
 use PshBackup\Task\BackupDatabase;
 use PshBackup\Task\BackupFilesDirectory;
+use PshBackup\Task\CleanBackupFolder;
 use PshBackup\TaskRunner;
 use PshBackup\Util\Inflector;
 use PshBackup\Util\S3Destination;
@@ -30,17 +32,17 @@ $s3Client = new S3Client([
         'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
     ],
 ]);
+$localBackupDirectory = sprintf('%s/backups', $platformConfig->appDir);
 
 $tasks = [
     new BackupDatabase(
         s3Client: $s3Client,
-        localBackupDirectory: sprintf('%s/backups', $platformConfig->appDir),
+        localBackupDirectory: $localBackupDirectory,
         destination: new S3Destination(
             getenv('S3_BUCKET'),
             sprintf('platform/%s/%s/database', $platformConfig->applicationName, Inflector::safeS3Prefix($platformConfig->branch))
         ),
         database: $platformConfig->credentials('database'),
-        localRetentionDays: 5,
     ),
     new BackupFilesDirectory(
         s3Client: $s3Client,
@@ -57,6 +59,22 @@ $tasks = [
             getenv('S3_BUCKET'),
             sprintf('platform/%s/%s/files-public', $platformConfig->applicationName, Inflector::safeS3Prefix($platformConfig->branch))
         )
+    ),
+    new BackupDailyLogs(
+        s3Client: $s3Client,
+        sourceLogFile: '/var/log/app.log',
+        localBackupDirectory: $localBackupDirectory,
+        destination: new S3Destination(
+            getenv('S3_BUCKET'),
+            sprintf('platform/%s/%s/logs', 'api', Inflector::safeS3Prefix('main'))
+        ),
+        // If "yesterday" was 12 hours ago, this command must be run in the first 12 hours of the day (UTC).
+        yesterday: (new DateTimeImmutable())->sub(new \DateInterval('PT12H')),
+        logDatePattern: 'Y-m-d',
+    ),
+    new CleanBackupFolder(
+        localBackupDirectory: $localBackupDirectory,
+        localRetentionDays: 5,
     ),
 ];
 

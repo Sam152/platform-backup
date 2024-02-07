@@ -1,5 +1,6 @@
 {
   "name": "sam152/platform-backup",
+  "license": "MIT",
   "config": {
     "platform": {
       "php": "8.2"
@@ -8,7 +9,8 @@
   "require": {
     "aws/aws-sdk-php": "^3",
     "monolog/monolog": "^3",
-    "platformsh/config-reader": "^2"
+    "platformsh/config-reader": "^2",
+    "php": ">=8.2"
   },
   "autoload": {
     "psr-4": {

@@ -14,6 +14,7 @@ final readonly class BackupDailyLogs implements TaskInterface {
     public function __construct(
         private S3ClientInterface $s3Client,
         private string $sourceLogFile,
+        private string $localBackupDirectory,
         private S3Destination $destination,
         private \DateTimeInterface $yesterday,
         private string $logDatePattern,
@@ -21,15 +22,25 @@ final readonly class BackupDailyLogs implements TaskInterface {
     }
 
     /**
-     * Adapt from: https://gitlab.com/contextualcode/platformsh-store-logs-at-s3
+     * Adapted from: https://gitlab.com/contextualcode/platformsh-store-logs-at-s3
      */
     public function execute(): void {
+        $logFileName = basename($this->sourceLogFile);
+        $localBackupFilePath = sprintf('%s/%s-%s', $this->localBackupDirectory, $logFileName, $this->yesterday->format('Y-m-d'));
+        $searchDatePattern = $this->yesterday->format($this->logDatePattern);
 
-//        $this->s3Client->putObject([
-//            'Bucket' => $this->destination->bucketName,
-//            'Key' => sprintf("%s/%s", $this->destination->key, $filename),
-//            'Body' => fopen($localBackupFilename, 'r'),
-//        ]);
+        echo("cat $this->sourceLogFile | grep $searchDatePattern > $localBackupFilePath");
+
+        if (!file_exists($localBackupFilePath)) {
+            throw new \Exception('Log file was not created.');
+        }
+
+        $this->s3Client->putObject([
+            'Bucket' => $this->destination->bucketName,
+            // Store in a location something like the following: `some-s3-location/2024/02/22-app.log`.
+            'Key' => sprintf("%s/%s/%s/%s-%s", $this->destination->key, $this->yesterday->format('Y'), $this->yesterday->format('m'), $this->yesterday->format('d'), $logFileName),
+            'Body' => fopen($localBackupFilePath, 'r'),
+        ]);
 
     }
 }

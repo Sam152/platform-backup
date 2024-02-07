@@ -15,7 +15,6 @@ final readonly class BackupDatabase implements TaskInterface {
         private string $localBackupDirectory,
         private S3Destination $destination,
         private array $database,
-        private int $localRetentionDays,
     ) {
     }
 
@@ -35,14 +34,5 @@ final readonly class BackupDatabase implements TaskInterface {
             'Key' => sprintf("%s/%s", $this->destination->key, $filename),
             'Body' => fopen($localBackupFilename, 'r'),
         ]);
-
-        // Remove files in the local backups folder older than our retention period.
-        $fileSystemIterator = new \FilesystemIterator($this->localBackupDirectory);
-        $now = time();
-        foreach ($fileSystemIterator as $file) {
-            if ($now - $file->getCTime() >= 60 * 60 * 24 * $this->localRetentionDays) {
-                unlink(sprintf('%s/%s', $this->localBackupDirectory, $file->getFilename()));
-            }
-        }
     }
 }
